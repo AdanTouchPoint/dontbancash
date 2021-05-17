@@ -4,11 +4,12 @@ import Button from "react-bootstrap/cjs/Button";
 import Alert from "react-bootstrap/Alert";
 import axios from "axios";
 import List from './list'
-
+import logo from '../assets/tymp.png'
 const cryptoRandomString = require("crypto-random-string");
 
 
 const FormTwiter = ({dataUser, setDataUser, setSenator, senator, mp, setMp}) => {
+    const [showList,setShowList] = useState(true )
     const [yourMP, setYourMP] = useState([])
     const [validated, setValidated] = useState(false);
     const [error, setError] = useState(false)
@@ -45,6 +46,7 @@ const FormTwiter = ({dataUser, setDataUser, setSenator, senator, mp, setMp}) => 
         setSenator(dataPayload)
         setMp(getMp
         )
+        setShowList(false)
         // const dataTweet = await axios.get('http://localhost:8080/taxPayers/tweet/1')
         // setTweetText(dataTweet.data.data.text)
         if (yourMP) {
@@ -58,15 +60,13 @@ const FormTwiter = ({dataUser, setDataUser, setSenator, senator, mp, setMp}) => 
 
 
     return (
-
-
-
             <div className={'container'} style={{justifyContent: 'center', display: 'flex'}}>
-                <div style={{maxWidth: '700px', width: '100%'}}>
-                    <div style={{textAlign:'justify'}}>
+                <div style={{maxWidth: '800px', width: '100%', backgroundColor:'#f4f4f4'}}>
+                    <div className={'container'} style={{textAlign:'center'}}>
                         {/*debe de ser img esperando  logo*/}
-                        <h1 style={{textAlign:'center', padding:'55px'}} >Tweet Your MP</h1>
-                        <p style={{}}>By typing in a postcode, users can easily find their local MPs and Senators.
+                        <img  style={{width:'350px', paddingTop:'25px'}}  src={logo} alt={'logo'}/>
+                        {/*<h1 style={{textAlign:'center', padding:'55px'}} >Tweet Your MP</h1>*/}
+                        <p  style={{textAlign:'justify'}}>By typing in a postcode, users can easily find their local MPs and Senators.
                             From there,
                             they can choose to tweet, call, or email them with just a few clicks
                             The system is created
@@ -74,7 +74,7 @@ const FormTwiter = ({dataUser, setDataUser, setSenator, senator, mp, setMp}) => 
                             followers and subscribers into political action.
 
                         </p>
-                        <p style={{}}>
+                        <p  style={{textAlign:'justify'}}>
                             This tool is currently built to contact Australian politicians, but can be adapted for any
                             country and its general functions can easily be repurposed.
                         </p>
@@ -127,30 +127,34 @@ const FormTwiter = ({dataUser, setDataUser, setSenator, senator, mp, setMp}) => 
 
                         <Form.Group>
                             <Button
+                                variant={'dark'}
                                 size={'lg'}
                                 onClick={click}
                                 className={'u-full-width'}
                             >
-                                Save
+                                Find
                             </Button>
                         </Form.Group>
                     </Form>
-                    <div>
+                    <div style={{textAlign:'justify'}} className={'container'} hidden={showList}>
                         <div>
                             <p>NOTE: Choose only one Representative at a time.
                                 If you wish to contact more than one representative, or add further emails to the same
                                 Representative, you will have the option to repeat after sending each email.</p>
                         </div>
                         <h2>MP´s</h2>
+                        <div  >
                         {mp.length > 0 && mp.filter(item => item.govt_type === 'Federal MPs').map((mps, index) => (
                             <List
+
                                 // tweetText={tweetText}
                                 mps={mps}
                                 key={index}
                             />)
                         )}
+                        </div>
                     </div>
-                    <div>
+                    <div  style={{textAlign:'justify'}}  className={'container'} hidden={showList} >
                         <h2>Senators</h2>
                         {senator.filter(item => item.govt_type === 'Federal Senators').map((mps, index) => (
                                 <div>
