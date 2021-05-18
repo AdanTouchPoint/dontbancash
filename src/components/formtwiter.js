@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import Loader from "react-loader-spinner";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/cjs/Button";
 import Alert from "react-bootstrap/Alert";
@@ -8,14 +9,16 @@ import logo from '../assets/tymp.png'
 const cryptoRandomString = require("crypto-random-string");
 
 
+
 const FormTwiter = ({dataUser, setDataUser, setSenator, senator, mp, setMp}) => {
+    const [showLoadSpin, setShowLoadSpin] = useState(false)
     const [showList,setShowList] = useState(true )
-    const [yourMP, setYourMP] = useState([])
+    // const [yourMP, setYourMP] = useState([])
     const [validated, setValidated] = useState(false);
     const [error, setError] = useState(false)
-    // const [tweetText, setTweetText] = useState({})
+   // const [tweetText, setTweetText] = useState({})
     const handleChange = e => {
-        setDataUser({
+              setDataUser({
             ...dataUser,
             [e.target.name]: e.target.value
         })
@@ -23,8 +26,10 @@ const FormTwiter = ({dataUser, setDataUser, setSenator, senator, mp, setMp}) => 
         console.log(dataUser)
     }
     const {firstName, lastName, zipCode, email, id} = dataUser;
+
     const click = async e => {
         e.preventDefault();
+         setShowLoadSpin(true)
         const form = e.currentTarget;
         if (form.checkValidity() === false) {
             e.preventDefault();
@@ -36,35 +41,32 @@ const FormTwiter = ({dataUser, setDataUser, setSenator, senator, mp, setMp}) => 
             setError(true)
             return
         }
-        setError(false)
+       setError(false)
         const randomId = cryptoRandomString({type: 'distinguishable', length: 10})
         dataUser.id = randomId;
-        console.log(dataUser)
         const response = await axios.post(`https://sendemail-service.herokuapp.com/sendtwit`, {dataUser})
         const dataPayload = await response.data.data
         const getMp = await response.data.getMp
         setSenator(dataPayload)
-        setMp(getMp
-        )
+        setMp(getMp)
+        await setShowLoadSpin(false)
         setShowList(false)
-        // const dataTweet = await axios.get('http://localhost:8080/taxPayers/tweet/1')
-        // setTweetText(dataTweet.data.data.text)
-        if (yourMP) {
-            //mostrar lista de MP´s
-            console.log(yourMP)
-        } else {
-            //Mostar Error
-            console.log('Error')
-        }
+    //     // const dataTweet = await axios.get('http://localhost:8080/taxPayers/tweet/1')
+    //     // setTweetText(dataTweet.data.data.text)
+    //     if (yourMP) {
+    //         //mostrar lista de MP´s
+    //         console.log(yourMP)
+    //     } else {
+    //         //Mostar Error
+    //         console.log('Error')
+    //     }
     }
-
-
     return (
-            <div className={'container'} style={{justifyContent: 'center', display: 'flex'}}>
+            <div className={'container'} style={{padding:'0px', justifyContent: 'center', display: 'flex'}}>
                 <div style={{maxWidth: '800px', width: '100%', backgroundColor:'#f4f4f4'}}>
                     <div className={'container'} style={{textAlign:'center'}}>
                         {/*debe de ser img esperando  logo*/}
-                        <img  style={{width:'350px', paddingTop:'25px'}}  src={logo} alt={'logo'}/>
+                        <img  style={{width:'310px', paddingTop:'25px'}}  src={logo} alt={'logo'}/>
                         {/*<h1 style={{textAlign:'center', padding:'55px'}} >Tweet Your MP</h1>*/}
                         <p  style={{textAlign:'justify'}}>By typing in a postcode, users can easily find their local MPs and Senators.
                             From there,
@@ -83,7 +85,6 @@ const FormTwiter = ({dataUser, setDataUser, setSenator, senator, mp, setMp}) => 
                         All fields are required!
                     </Alert> : null}
                     <Form noValidate validated={validated}>
-
                         {/*<Form.Group controlId="firstname">*/}
                         {/*    <Form.Control*/}
                         {/*        type="text"*/}
@@ -113,7 +114,6 @@ const FormTwiter = ({dataUser, setDataUser, setSenator, senator, mp, setMp}) => 
                                 required
                             />
                         </Form.Group>
-
                         <Form.Group controlId="cp">
                             <Form.Control
                                 type="text"
@@ -124,7 +124,6 @@ const FormTwiter = ({dataUser, setDataUser, setSenator, senator, mp, setMp}) => 
                                 maxLength="4"
                             />
                         </Form.Group>
-
                         <Form.Group>
                             <Button
                                 variant={'dark'}
@@ -132,10 +131,18 @@ const FormTwiter = ({dataUser, setDataUser, setSenator, senator, mp, setMp}) => 
                                 onClick={click}
                                 className={'u-full-width'}
                             >
-                                Find
+                                Find your MP
                             </Button>
                         </Form.Group>
                     </Form>
+                           <Loader
+                            visible={showLoadSpin}
+                            type="Puff"
+                            color="#000000"
+                            height={100}
+                            width={100}
+                            timeout={3000} //3 secs
+                        />
                     <div style={{textAlign:'justify'}} className={'container'} hidden={showList}>
                         <div>
                             <p>NOTE: Choose only one Representative at a time.
@@ -143,10 +150,9 @@ const FormTwiter = ({dataUser, setDataUser, setSenator, senator, mp, setMp}) => 
                                 Representative, you will have the option to repeat after sending each email.</p>
                         </div>
                         <h2>MP´s</h2>
-                        <div  >
+                        <div>
                         {mp.length > 0 && mp.filter(item => item.govt_type === 'Federal MPs').map((mps, index) => (
                             <List
-
                                 // tweetText={tweetText}
                                 mps={mps}
                                 key={index}
