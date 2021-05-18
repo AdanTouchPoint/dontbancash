@@ -19,7 +19,7 @@ const List = ({mps}) => {
                             href={`https://twitter.com/intent/tweet?text=${tweetText}`}
                             target={"blank"}
                         >
-                            SENDTWEET
+                            SEND TWEET
                         </Button> :
                         <p>No Tweeter</p>
                     }
